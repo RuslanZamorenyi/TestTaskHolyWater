@@ -1,5 +1,6 @@
 import MySQLdb
 
+
 def db_connect():
     connect = MySQLdb.connect(host='127.0.0.1', user='root', passwd='admin', db='flask')
     return connect
@@ -31,23 +32,15 @@ for record in data_list:
     ad_content = record.get("ad_content")
     ad_group = record.get("ad_group")
     landing_page = record.get("landing_page")
-    connection = db_connect().cursor()
-    query = "SELECT * FROM table_costs"
-    connection.execute(query)
 
-    # Отримання результатів запиту
-    results = connection.fetchall()
-    print(results)
     sql_query = """INSERT INTO table_costs (marketing_id, location, channel, medium, campaign, keyword, ad_content, ad_group, landing_page) 
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-    values = [marketing_id, location, channel, medium, campaign, keyword, ad_content, ad_group, landing_page]
+    values = (marketing_id, location, channel, medium, campaign, keyword, ad_content, ad_group, landing_page)
     print(values)
-    connection.executemany(sql_query, values)
-    # Підтвердження транзакції
-    connection.commit()
 
-    # Закриття курсора та з'єднання
-    connection.close()
-    connection.close()
+    with db_connect().cursor() as connection:
+        connection.execute(sql_query, values)
+        db_connect().commit()
+
 
 
